@@ -73,7 +73,27 @@ def server_loop():
     server.bind((target,port))
     server.listen(5) # backlog connections of 5 maximum
     
+    while True:
+        client_socket, addr = server.accept() #server accepting connections from clients
+        
+        #spin off a thread to handle every new client
+        client_thread = threading.Thread(target=client_handler, args=(client_socket,))
+        client_thread.start()
     
+def run_command():
+    'function to handle command execution'
+    # striping off the newline 
+    command = command.rstrip()
+    
+    #run the command and getting output back
+    
+    try:
+        output = subprocess.check_output(command,stderr=subprocess.STDOUT, shell=True)
+    except:
+        output = 'Failed to execute command'
+    
+    # send the output back to the client
+    return output
     
 
 def main():

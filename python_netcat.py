@@ -137,7 +137,7 @@ def client_handler(client_socket):
         while True:
             client_socket.send('shell:##')
             cmd_buffer = ''
-            while '\n' not in in cmd_buffer:
+            while '\n' not in cmd_buffer:
                 cmd_buffer += client_socket.recv(1024)
             
             response = run_command(cmd_buffer)
@@ -174,7 +174,7 @@ def main():
         elif o in ('-t', '--target'):
             target = i
         elif o in ('-p', '--port'):
-            port = int(a)
+            port = int(i)
         else:
             assert False, "wrong option"
         
@@ -185,7 +185,7 @@ def main():
         # if we are only planning on listening,uploading things, executing commands and having a shell back
         if listen:
             server_loop()
-            
+        
 main()
 
          

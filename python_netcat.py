@@ -93,9 +93,55 @@ def run_command():
         output = 'Failed to execute command'
     
     # send the output back to the client
-    return output
-    
+    return output # send the output back to the client
 
+def client_handler(client_socket):
+    'function to handle the client'
+    global upload 
+    global execute
+    global command
+    
+    # checking for upload
+    if len(upload_destination):
+        # read all bytes and write to our destination
+        file_buffer = ''
+        
+        # keep reading data until none is available
+        while True:
+            data = client_socket.recv(4096)
+            
+            if not data:
+                break
+            else:
+                file_buffer += data
+        
+        # taking all the bytes and writing them out
+        try:
+            fd = open(upload_destination,'wb')
+            fd.write(file_buffer)
+            fd.close()
+            
+            # checking we actually wrote the file out
+            client_socket.send('File has been successfully saved to {}'.format(upload_destination))        
+        except:
+            client_socket.send('Failed to save file')
+    
+    # check for command execution
+    if len(execute):
+        # run command
+        output = run_command(execute)
+        client_socket.send(output)
+    
+    # another loop to check if a command shell is needed by client
+    if command:
+        while True:
+            client_socket.send('shell:##')
+            cmd_buffer = ''
+            while '\n' not in in cmd_buffer:
+                cmd_buffer += client_socket.recv(1024)
+            
+            response = run_command(cmd_buffer)
+            client_socket.send(response)
 def main():
     global listen
     global port

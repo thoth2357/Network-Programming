@@ -142,6 +142,7 @@ def client_handler(client_socket):
             
             response = run_command(cmd_buffer)
             client_socket.send(response)
+
 def main():
     global listen
     global port
@@ -150,7 +151,7 @@ def main():
     global upload_destination
     global target
     
-    if not len(sys.argv[1:])
+    if not len(sys.argv[1:]):
         usage()
     
     # reading the commandline options

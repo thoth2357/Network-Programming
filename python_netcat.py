@@ -1,3 +1,5 @@
+# credits --> black hat python justin seitz
+
 # importing packages
 import socket
 import threading 

@@ -6,7 +6,6 @@ import socket
 import sys
 import threading
 from numba import unicode
-from numba import unicode
 from pygments.util import xrange
 
 def server_side(local_host, local_port, remote_port, remote_host, receive_first):
@@ -87,7 +86,7 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
 def hexdump(src, length=16):
     'hex dumping function'
     result = []
-    digits = 4 if isinstance(src, unicode) else 2
+    digits = 4 if isinstance(src, str) else 2
     for i in xrange(0,len(src), length):
         a = src[i:i+length]
         hexa = b''.join(['%0*X'%(digits, ord(x)) for x in a])

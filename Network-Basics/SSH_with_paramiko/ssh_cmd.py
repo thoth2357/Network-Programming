@@ -5,7 +5,6 @@ your target doesn’t have an SSH client'''
 # importing packages
 import paramiko
 import threading
-import subprocess
 
 def ssh_command(ip, user, passwd, command):
     'function to connect to an ssh server and run a single command'
@@ -18,4 +17,5 @@ def ssh_command(ip, user, passwd, command):
         print(ssh_session.recv(1024))
     return
 
-ssh_command('192.168.43.105', 'anonymous', 'claudia', 'ls')
+ssh_command('0.0.0.0', 'anonymous', 'claudia', 'echo $USER')
+# note a ssh server must be running on the target system .if it is a windows system who dont have ssh server preinstalled use the reverse ssh code written

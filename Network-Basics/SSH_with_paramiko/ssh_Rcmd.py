@@ -25,4 +25,4 @@ def ssh_command(ip , user, passwd, command):
                 ssh_session.send(str(e))
         client.close()
     return
-ssh_command('192.168.43.105', 'anonymous', 'claudia', 'ls')
+ssh_command('127.0.0.2', 'anonymous', 'claudia', 'ls')

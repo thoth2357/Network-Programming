@@ -7,6 +7,7 @@ import sys
 import threading
 from numba import unicode
 from pygments.util import xrange
+from scapy.all import wrpcap  
 
 def server_side(local_host, local_port, remote_port, remote_host, receive_first):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,20 +30,26 @@ def server_side(local_host, local_port, remote_port, remote_host, receive_first)
         proxy_thread = threading.Thread(target=proxy_handler, args=(client_socket, remote_host, remote_port, receive_first))
         proxy_thread.start()
 def proxy_handler(client_socket, remote_host, remote_port, receive_first):
-    'handles the sending and the receiving to either side of the data stream'
-    # connecting to the remote host
-    print(remote_host, remote_port)
-    remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    remote_socket.connect((remote_host, remote_port))
+    try:
+        'handles the sending and the receiving to either side of the data stream'
+        # connecting to the remote host
+        print('connecting to {} at port {}'.format(remote_host, remote_port))
+        remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        remote_socket.connect((remote_host, remote_port))
+        print('connected to remote host')
+    except Exception:
+        print('Connection to remote host unsuccessful')
+
 
     # receive data from the remote end if necessary
     if receive_first:
         remote_buffer = receive_from(remote_socket)
-        hexdump(remote_buffer)
+        #print(remote_buffer)
+        #hexdump(remote_buffer)
 
         # send it to our response handler
         remote_buffer = response_handler(remote_buffer)
-
+        print(remote_buffer)
         # if we have data to send our local client,send it
 
         if len(remote_buffer):
@@ -55,7 +62,7 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
         local_buffer = receive_from(client_socket)
         if len(local_buffer):
             print('Received %d bytes from localhost'%len(local_buffer))
-            hexdump(local_buffer)
+            #hexdump(local_buffer)
 
             # send it to our request handler
             local_buffer = request_handler(local_buffer)
@@ -69,10 +76,10 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
 
         if len(remote_buffer):
             print("Received %d bytes from remote."%len(remote_buffer))
-            hexdump(remote_buffer)
+            #hexdump(remote_buffer)
 
             # send the response back to the local socket
-            client_socket.send(remote_buffer.encode())
+            client_socket.send(remote_buffer)
             print('==> Sent to localhost')
 
         # if no data on the either side, closes connection
@@ -89,14 +96,14 @@ def hexdump(src, length=16):
     digits = 4 if isinstance(src, str) else 2
     for i in xrange(0,len(src), length):
         a = src[i:i+length]
-        hexa = b''.join(['%0*X'%(digits, ord(x)) for x in a])
+        hexa = b''.join(['%0*X'%(digits, ord(str(x))) for x in a])
         text = b''.join([x if 0x20 <= ord(x) < 0x7F else b'.' for x in a])
         result.append(b"%04X %-*s %s" % (i, length*(digits+1),hexa, text))
 
     print(b'\n'.join(result))
 
 def receive_from(connection):
-    buffer = ''
+    buffer = ''.encode()
     # we set a 2 second timeout 
     connection.settimeout(2)
 
@@ -107,11 +114,12 @@ def receive_from(connection):
             if not data:
                 break
             buffer += data
-    except:
-        pass
+    except Exception as e:
+        print(e)
     return buffer
 def request_handler(buffer):
     'function to modify the requests sent to the remote host'
+    #wrpcap('sent_to_host.pcap',buffer)
     # perform packets modifications
     return buffer
 

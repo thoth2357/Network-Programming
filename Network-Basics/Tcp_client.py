@@ -1,7 +1,7 @@
 import socket
 
-target_host = '127.1.2.3'
-target_port = 5555
+target_host = '127.0.0.2'
+target_port = 80
 
 #create a client object 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

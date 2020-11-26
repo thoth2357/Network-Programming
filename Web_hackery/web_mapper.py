@@ -1,4 +1,5 @@
 # importing packages
+import time
 import os
 import queue
 import threading
@@ -32,6 +33,7 @@ def test_remote():
             response = urllib.request.urlopen(request)
             print("[%d] => %s" % (response.code, path))
             response.close()
+            time.sleep(5)
         except urllib.error.HTTPError as error:
             print("Failed %s" % error.code)
             pass

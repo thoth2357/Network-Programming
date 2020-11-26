@@ -119,7 +119,12 @@ def receive_from(connection):
     return buffer
 def request_handler(buffer):
     'function to modify the requests sent to the remote host'
-    #wrpcap('sent_to_host.pcap',buffer)
+    try:
+        fd = open('buffers.txt','wb')
+        fd.write(buffer)
+        fd.close()
+    except Exception as e:
+        print(e)
     # perform packets modifications
     return buffer
 
